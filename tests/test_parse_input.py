@@ -1,3 +1,6 @@
+from src.parser import InputParser
+
+
 EXAMPLE_INPUT = """
 10 6 5
 6 7 5 3 3
@@ -10,4 +13,5 @@ EXAMPLE_INPUT = """
 """
 
 def test_input_parser() -> None:
-    ...
+    parser = InputParser()
+    parser.parse(EXAMPLE_INPUT)
