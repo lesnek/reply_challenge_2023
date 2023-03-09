@@ -1,6 +1,10 @@
-from src.model import CurrentSnake, State
+from typing import Sequence, Literal
+
+import pytest
+
+from src.model import CurrentSnake, State, Position
 from src.parser import InputParser
-from src.solver import get_available_positions
+from src.solver import get_available_positions, get_best_position
 
 EXAMPLE_INPUT = """10 6 5
 6 7 5 3 3
@@ -86,3 +90,37 @@ def test_available_positions_with_assigned_fields() -> None:
     ]
 
     assert set(available_positions) == set(expected_available_positions)
+
+
+@pytest.mark.parametrize(
+    "matrix, best_coor",
+    [
+        (
+            [
+                [1, 5, 3, 6, 3, 8, 5, 2, 6, 8],
+                [6, 4, "*", 0, 5, 3, 7, 5, 2, 8],
+                [3, "x", 5, 0, 3, 6, 4, "*", "x", 7],
+                [3, 5, 6, 3, 0, 3, 5, 3, 4, 6],
+                [3, 6, 7, "*", 3, 0, 6, 4, 5, 7],
+                [3, 7, 8, "x", 3, 6, 0, 4, 5, 6],
+            ],
+            (0, 5),
+        ),
+        (
+            [
+                [1, 5, 3, 6, 3, "X", 5, 2, 6, 8],
+                [6, 4, "*", 0, 5, 3, 7, 5, 2, 8],
+                [3, "x", 5, 0, 3, 6, 4, "*", "x", 7],
+                [3, 5, 6, 3, 0, 3, 5, 3, 4, 6],
+                [3, 6, 7, "*", 3, 0, 6, 4, 5, 7],
+                [3, 7, 8, "x", 3, 6, 0, 4, 5, 6],
+            ],
+            (0, 9),
+        ),
+    ],
+)
+def test_best_position(
+    matrix: Sequence[Sequence[int | Literal["*", "x"]]], best_coor: Position
+):
+    state = State(matrix=matrix, available_snakes=[], snakes=[])
+    assert get_best_position(state) == best_coor

@@ -28,11 +28,13 @@ class InputParser:
             snakes_cnt=snakes_cnt,
             snakes=snakes,
             matrix=matrix,
-            portal_positions=portal_positions
+            portal_positions=portal_positions,
         )
 
     @staticmethod
-    def get_portal_positions(y, row: Sequence[int | Literal["*"]]) -> Sequence[tuple[int, int]]:
+    def get_portal_positions(
+        y, row: Sequence[int | Literal["*"]]
+    ) -> Sequence[tuple[int, int]]:
         result = []
         x_coor = 0
         for x in row:

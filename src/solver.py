@@ -26,7 +26,18 @@ def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegment
 
 
 def get_best_position(state: State) -> Position:
-    raise NotImplemented
+    best_value = 0
+    best_coor = (0, 0)
+    x, y = 0, 0
+    for row in state.matrix:
+        for value in row:
+            if isinstance(value, int) and value > best_value:
+                best_value = value
+                best_coor = (y, x)
+            x += 1
+        y += 1
+
+    return best_coor
 
 
 def input_to_state(input: Input) -> State:
