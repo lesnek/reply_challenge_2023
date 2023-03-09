@@ -42,17 +42,17 @@ def test_available_positions() -> None:
     available_positions = get_available_positions(input, state, current_snake)
 
     expected_available_positions = [
-        ((0, 1), 1),
-        ((2, 1), 1),
-        ((1, 0), 1),
-        ((1, 7), 2),
-        ((2, 6), 2),
-        ((2, 8), 2),
-        ((3, 7), 2),
-        ((3, 3), 2),
-        ((4, 2), 2),
-        ((5, 3), 2),
-        ((4, 4), 2),
+        ((0, 1), 1, "U"),
+        ((2, 1), 1, "D"),
+        ((1, 0), 1, "L"),
+        ((1, 7), 2, "R"),
+        ((2, 6), 2, "R"),
+        ((2, 8), 2, "R"),
+        ((3, 7), 2, "R"),
+        ((3, 3), 2, "R"),
+        ((4, 2), 2, "R"),
+        ((5, 3), 2, "R"),
+        ((4, 4), 2, "R"),
     ]
 
     assert set(available_positions) == set(expected_available_positions)
@@ -79,14 +79,14 @@ def test_available_positions_with_assigned_fields() -> None:
     available_positions = get_available_positions(input, state, current_snake)
 
     expected_available_positions = [
-        ((0, 1), 1),
-        ((1, 0), 1),
-        ((1, 7), 2),
-        ((2, 6), 2),
-        ((3, 7), 2),
-        ((3, 3), 2),
-        ((4, 2), 2),
-        ((4, 4), 2),
+        ((0, 1), 1, "U"),
+        ((1, 0), 1, "L"),
+        ((1, 7), 2, "R"),
+        ((2, 6), 2, "R"),
+        ((3, 7), 2, "R"),
+        ((3, 3), 2, "R"),
+        ((4, 2), 2, "R"),
+        ((4, 4), 2, "R"),
     ]
 
     assert set(available_positions) == set(expected_available_positions)

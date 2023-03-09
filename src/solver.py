@@ -40,12 +40,12 @@ def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegment
 
     assert len(available_positions) > 0
 
-    best_position, best_consumption = available_positions[0]
+    best_position, best_consumption, best_direction = available_positions[0]
     best_value = input.matrix[best_position[0]][best_position[1]]
 
     assert type(best_value) == int
 
-    for new_position, new_consumption in available_positions[1:]:
+    for new_position, new_consumption, new_direction in available_positions[1:]:
         new_value = input.matrix[new_position[0]][best_position[1]]
 
         assert type(new_value) == int
@@ -54,12 +54,13 @@ def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegment
             best_position = new_position
             best_consumption = new_consumption
             best_value = new_value
+            best_direction = new_direction
 
     new_assigned_segments: list[Direction | PortDirection] = [
         i for i in snake.assigned_segments[1]
     ]  # copy
     new_assigned_segments.append(
-        get_direction(snake.last_segment_position, best_position)
+        get_direction(snake.last_segment_position, best_position, best_direction)
     )
 
     new_snake = CurrentSnake(
@@ -71,8 +72,15 @@ def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegment
     return solve_snake(input, state, new_snake)
 
 
-def get_direction(previous: Position, new: Position) -> Direction | PortDirection:
-    raise NotImplemented
+def get_direction(
+    previous: Position, new: Position, direction: Direction
+) -> Direction | PortDirection:
+    row_diff, col_diff = previous[0] - new[0], previous[1] - new[1]
+
+    if row_diff + col_diff <= 1:
+        return direction
+    else:
+        return direction, new
 
 
 def get_best_position(state: State) -> Position:
@@ -100,26 +108,26 @@ def input_to_state(input: Input) -> State:
 
 def get_near_positions(
     input: Input, state: State, position: Position
-) -> Sequence[Position]:
+) -> Sequence[tuple[Position, Direction]]:
     cur_row, cur_col = position
 
     positions = [
-        (cur_row, (cur_col - 1) % input.width),
-        (cur_row, (cur_col + 1) % input.width),
-        ((cur_row - 1) % input.heigth, cur_col),
-        ((cur_row + 1) % input.heigth, cur_col),
+        ((cur_row, (cur_col - 1) % input.width), "L"),
+        ((cur_row, (cur_col + 1) % input.width), "R"),
+        (((cur_row - 1) % input.heigth, cur_col), "U"),
+        (((cur_row + 1) % input.heigth, cur_col), "D"),
     ]
 
     return [
         position
         for position in positions
-        if state.matrix[position[0]][position[1]] != "x"
+        if state.matrix[position[0][0]][position[0][1]] != "x"
     ]
 
 
 def get_available_positions(
     input: Input, state: State, current: CurrentSnake
-) -> Sequence[tuple[Position, int]]:
+) -> Sequence[tuple[Position, int, Direction]]:
     """Returns available positions with number of segments it consumes."""
 
     matrix = state.matrix
@@ -131,7 +139,7 @@ def get_available_positions(
 
     final_positions = []
 
-    for position in positions:
+    for position, direction in positions:
         value = matrix[position[0]][position[1]]
 
         if value == "x" or (value == "*" and remaining_segments < 2):
@@ -142,8 +150,10 @@ def get_available_positions(
                     continue
 
                 portal_positions = get_near_positions(input, state, portal_position)
-                final_positions.extend([(position, 2) for position in portal_positions])
+                final_positions.extend(
+                    [(position[0], 2, direction) for position in portal_positions]
+                )
         else:
-            final_positions.append((position, 1))
+            final_positions.append((position, 1, direction))
 
     return final_positions
