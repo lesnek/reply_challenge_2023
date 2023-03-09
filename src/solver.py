@@ -15,7 +15,7 @@ from .model import (
 )
 
 
-def solve(input: Input) -> str:
+def solve(input: Input) -> tuple[Output, State]:
     state = input_to_state(input)
 
     for snake_segments_cnt in input.snakes:
@@ -29,7 +29,7 @@ def solve(input: Input) -> str:
         snake_segments = solve_snake(input, state, snake)
         state.snakes.append(snake_segments)
 
-    return OutputParser.parse(Output(snake_segments=state.snakes))
+    return Output(snake_segments=state.snakes), state
 
 
 def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegments:

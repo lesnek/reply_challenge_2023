@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 
-from src.parser import InputParser
+from src.parser import InputParser, OutputParser
+from src.score import calc_score
 from src.solver import solve
 
 def main():
@@ -14,8 +15,10 @@ def main():
     input_data = input_parser.open_file(args.filename)
     print(input_data)
     input = input_parser.parse(input_data)
-    result = solve(input)
-    print(result)
+    output, state = solve(input)
+    print(f"{calc_score(input, state)=}")
+    print(OutputParser.parse(output))
+    
 
 
 if __name__ == "__main__":
