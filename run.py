@@ -7,6 +7,7 @@ from src.solver import solve
 def main():
     parser = ArgumentParser()
     parser.add_argument("-f", "--filename")
+    parser.add_argument("-s", "--store")
 
     args = parser.parse_args()
 
@@ -18,7 +19,8 @@ def main():
     print(f"{calc_score(input, state)=}")
     print(OutputParser.parse(output))
 
-    OutputParser.save_to_file(output, args.filename.split("/")[-1])
+    if args.store == "true":
+        OutputParser.save_to_file(output, args.filename.split("/")[-1])
     
 
 

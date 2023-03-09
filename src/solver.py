@@ -1,25 +1,29 @@
 from collections.abc import Sequence
-from typing import cast
+from itertools import product
+from typing import Literal, cast
 
-from .model import (
-    CurrentSnake,
-    Direction,
-    Input,
-    Output,
-    PortDirection,
-    Position,
-    SnakeSegments,
-    State,
-)
+from .model import (CurrentSnake, Direction, Input, Output, PortDirection,
+                    Position, SnakeSegments, State)
 
 
 def solve(input: Input) -> tuple[Output, State]:
     state = input_to_state(input)
 
-    for snake_segments_cnt in input.snakes:
+    sorted_positions = sorted(
+        [
+            (r, c)
+            for r, c in list(product(range(input.heigth), range(input.width)))
+            if input.matrix[r][c] != "*"
+        ],
+        key=lambda x: (compare_positions(input.matrix))((x, 0)),
+        reverse=True,
+    )
+
+    for i, snake_segments_cnt in enumerate(input.snakes):
         first_position = get_best_position(state)
         state.matrix[first_position[0]][first_position[1]] = "x"
-        print(first_position, state.matrix[first_position[0]][first_position[1]])
+
+        print(f"{i / len(input.snakes) * 100}%")
 
         snake = CurrentSnake(
             remaining_segments=snake_segments_cnt - 1,
@@ -27,52 +31,57 @@ def solve(input: Input) -> tuple[Output, State]:
             last_segment_position=first_position,
         )
         snake_segments = solve_snake(input, state, snake)
+        assert snake_segments is not None
         state.snakes.append(snake_segments)
 
     return Output(snake_segments=state.snakes), state
 
 
-def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegments:
+def compare_positions(matrix: Sequence[Sequence[int | Literal["*"]]]):
+    def compare(value):
+        return matrix[value[0][0]][value[0][1]]
+    return compare
+
+
+def solve_snake(
+    input: Input, state: State, snake: CurrentSnake
+) -> SnakeSegments | None:
     if snake.remaining_segments == 0:
         return snake.assigned_segments
 
     available_positions = get_available_positions(input, state, snake)
 
-    assert len(available_positions) > 0
+    if len(available_positions) == 0:
+        return None
 
-    best_position, best_consumption, best_direction = available_positions[0]
-    best_value = input.matrix[best_position[0]][best_position[1]]
-
-    assert type(best_value) == int
-
-    for new_position, new_consumption, new_direction in available_positions[1:]:
-        new_value = input.matrix[new_position[0]][new_position[1]]
-
-        try:
-            assert type(new_value) == int
-        except Exception:
-            breakpoint()
-
-        if cast(int, new_value) > cast(int, best_value):
-            best_position = new_position
-            best_consumption = new_consumption
-            best_value = new_value
-            best_direction = new_direction
-
-    new_assigned_segments: list[Direction | PortDirection] = [
-        i for i in snake.assigned_segments[1]
-    ]  # copy
-    new_assigned_segments.append(
-        get_direction(snake.last_segment_position, best_position, best_direction)
+    sorted_positions = sorted(
+        available_positions, key=compare_positions(state.matrix), reverse=True # type: ignore
     )
+    i = 0
+    result = None
 
-    new_snake = CurrentSnake(
-        remaining_segments=snake.remaining_segments - best_consumption,
-        assigned_segments=(snake.assigned_segments[0], new_assigned_segments),
-        last_segment_position=best_position,
-    )
-    state.matrix[best_position[0]][best_position[1]] = "x"
-    return solve_snake(input, state, new_snake)
+    while result is None:
+        if i == len(sorted_positions):
+            return None
+
+        best_position, best_consumption, best_direction = sorted_positions[i]
+        new_assigned_segments: list[Direction | PortDirection] = [
+            i for i in snake.assigned_segments[1]
+        ]  # copy
+        new_assigned_segments.append(
+            get_direction(snake.last_segment_position, best_position, best_direction)
+        )
+
+        new_snake = CurrentSnake(
+            remaining_segments=snake.remaining_segments - best_consumption,
+            assigned_segments=(snake.assigned_segments[0], new_assigned_segments),
+            last_segment_position=best_position,
+        )
+        state.matrix[best_position[0]][best_position[1]] = "x"
+        result = solve_snake(input, state, new_snake)
+        i += 1
+
+    return result
 
 
 def get_direction(
@@ -151,13 +160,11 @@ def get_available_positions(
                     continue
 
                 portal_positions = [
-                    p
+                    p[0]
                     for p in get_near_positions(input, state, portal_position)
-                    if p != "*"
+                    if matrix[p[0][0]][p[0][1]] != "*"
                 ]
-                final_positions.extend(
-                    [(position[0], 2, direction) for position in portal_positions]
-                )
+                final_positions.extend([(p, 2, direction) for p in portal_positions])
         else:
             final_positions.append((position, 1, direction))
 

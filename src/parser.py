@@ -13,7 +13,6 @@ class InputParser:
         width, heigth, snakes_cnt = [int(char) for char in lines[0].split(" ")]
         snakes = [int(snake) for snake in lines[1].split(" ")]
         matrix = []
-        portal_positions = []
 
         for line in lines[2:-1]:
             matrix.append(
