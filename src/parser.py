@@ -1,6 +1,6 @@
 from typing import Literal, Sequence
 
-from src.model import Input, Output
+from src.model import Direction, Input, Output, PortDirection
 
 
 class InputParser:
@@ -56,19 +56,30 @@ class InputParser:
 
 
 class OutputParser:
+    @classmethod
+    def snake_segs_to_str(
+        cls, snake_segs: Sequence[Direction | PortDirection]
+    ) -> Sequence[str]:
+        return [cls.snake_seg_to_str(seg) for seg in snake_segs]
+
     @staticmethod
-    def snake_seg_to_str(snake_segs) -> Sequence[str]:
-        return [str(seg) for seg in snake_segs]
+    def snake_seg_to_str(snake_seg: Direction | PortDirection) -> str:
+        match snake_seg:
+            case (direction, (row, col)):
+                return f"{direction} {row} {col}"
+            case direction:
+                return direction
 
     @staticmethod
     def parse(output: Output) -> str:
         result = []
-        for snake_segs in output.snake_segments:
-            result.append(" ".join(OutputParser.snake_seg_to_str(snake_segs)))
+        for (row, col), directions in output.snake_segments:
+            result.append(
+                f"{col} {row} " + " ".join(OutputParser.snake_segs_to_str(directions))
+            )
         return "\n".join(result)
 
-    @staticmethod
-    def save_to_file(output: Output) -> None:
-        with open("result.txt", "w+") as filecek:
-            for snake_segs in output.snake_segments:
-                filecek.write(" ".join(OutputParser.snake_seg_to_str(snake_segs)))
+    @classmethod
+    def save_to_file(cls, output: Output, name: str) -> None:
+        with open(f"outputs/{name}-result.txt", "x") as filecek:
+            filecek.write(cls.parse(output))

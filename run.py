@@ -17,6 +17,8 @@ def main():
     output, state = solve(input)
     print(f"{calc_score(input, state)=}")
     print(OutputParser.parse(output))
+
+    OutputParser.save_to_file(output, args.filename.split("/")[-1])
     
 
 
