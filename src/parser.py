@@ -1,6 +1,6 @@
 from typing import Literal
 
-from src.model import Input
+from src.model import Input, Output
 
 
 class InputParser:
@@ -36,3 +36,18 @@ class InputParser:
         with open(path_to_file, "w+") as filecek:
             lines = filecek.read()
         return lines
+
+
+class OutputParser:
+    @staticmethod
+    def parse(output: Output) -> str:
+        result = []
+        for snake_segs in output.snake_segments:
+            result.append(" ".join(snake_segs))
+        return "\n".join(result)
+
+    @staticmethod
+    def save_to_file(output: Output) -> None:
+        with open("result.txt", "w+") as filecek:
+            for snake_segs in output.snake_segments:
+                filecek.write(" ".join(snake_segs))

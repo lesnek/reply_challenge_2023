@@ -12,16 +12,16 @@ class Input:
     matrix: Sequence[Sequence[int | Literal["*"]]]
 
 
-@dataclass
-class Output:
-    ...
-
-
 Direction = Literal["L", "R", "D", "U"]
 Position = tuple[int, int]
 PortDirection = tuple[Direction, Position]
 
 SnakeSegments = Sequence[Direction | PortDirection]
+
+
+@dataclass
+class Output:
+    snake_segments: SnakeSegments
 
 
 @dataclass(frozen=True)
