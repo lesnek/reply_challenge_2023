@@ -5,7 +5,9 @@ description = ""
 authors = [
     {name = "Milan Suk", email = "Milansuk@email.cz"},
 ]
-dependencies = []
+dependencies = [
+    "black>=23.1.0",
+]
 requires-python = ">=3.10"
 license = {text = "MIT"}
 [project.optional-dependencies]

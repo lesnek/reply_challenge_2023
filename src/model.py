@@ -8,12 +8,13 @@ class Input:
     heigth: int
     snakes_cnt: int
     snakes: list[int]
-    matrix: list[list[int|Literal["*"]]]
+    matrix: list[list[int | Literal["*"]]]
 
 
 @dataclass
 class Output:
     ...
+
 
 Direction = Literal["L", "R", "D", "U"]
 Position = tuple[int, int]

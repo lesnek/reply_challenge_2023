@@ -6,7 +6,12 @@ def solve(input: Input) -> Output:
 
 
 def input_to_state(input: Input) -> State:
-    raise NotImplemented
+    return State(
+        matrix=input.matrix,
+        available_snakes=input.snakes,
+        snakes=[],
+    )
+
 
 
 def get_available_positions(state: State) -> list[Position]:

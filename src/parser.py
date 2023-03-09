@@ -13,9 +13,17 @@ class InputParser:
         snakes = [int(snake) for snake in lines[1].split(" ")]
         matrix = []
         for line in lines[2:-1]:
-            matrix.append([self.parse_int_or_asterisk(char) for char in line.split(" ")])
+            matrix.append(
+                [self.parse_int_or_asterisk(char) for char in line.split(" ")]
+            )
 
-        return Input(width=width, heigth=heigth, snakes_cnt=snakes_cnt, snakes=snakes, matrix=matrix)
+        return Input(
+            width=width,
+            heigth=heigth,
+            snakes_cnt=snakes_cnt,
+            snakes=snakes,
+            matrix=matrix,
+        )
 
     @staticmethod
     def parse_int_or_asterisk(char: str) -> int | Literal["*"]:
