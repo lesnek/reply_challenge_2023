@@ -20,7 +20,7 @@ def solve(input: Input) -> tuple[Output, State]:
     )
     n = 0
 
-    for i, snake_segments_cnt in enumerate(input.snakes):
+    for i, snake_segments_cnt in enumerate(sorted(input.snakes)):
         result = None
 
         while result is None:
@@ -172,7 +172,7 @@ def get_available_positions(
                     for p in get_near_positions(input, state, portal_position)
                     if matrix[p[0][0]][p[0][1]] != "*"
                 ]
-                final_positions.extend([(p, 2, direction) for p in portal_positions])
+                final_positions.extend([(p, 1, direction) for p in portal_positions])
         else:
             final_positions.append((position, 1, direction))
 
