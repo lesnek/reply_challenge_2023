@@ -20,7 +20,7 @@ def solve(input: Input) -> tuple[Output, State]:
     )
     n = 0
 
-    for i, snake_segments_cnt in enumerate(sorted(input.snakes)):
+    for i, snake_segments_cnt in enumerate(sorted(input.snakes, reverse=True)):
         result = None
 
         while result is None:
