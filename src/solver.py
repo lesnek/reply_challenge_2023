@@ -1,4 +1,4 @@
-from .model import Input, Output, Position, State
+from .model import CurrentSnake, Input, Output, Position, State
 
 
 def solve(input: Input) -> Output:
@@ -13,6 +13,5 @@ def input_to_state(input: Input) -> State:
     )
 
 
-
-def get_available_positions(state: State) -> list[Position]:
+def get_available_positions(state: State, current: CurrentSnake) -> list[Position]:
     raise NotImplemented
