@@ -8,6 +8,7 @@ class InputParser:
         ...
 
     def parse(self, input_string: str) -> Input:
+        input_string = input_string.replace("\n\n", "\n")
         lines = [line.replace("\n", "") for line in input_string.split("\n")]
         width, heigth, snakes_cnt = [int(char) for char in lines[0].split(" ")]
         snakes = [int(snake) for snake in lines[1].split(" ")]
@@ -51,7 +52,7 @@ class InputParser:
 
     @staticmethod
     def open_file(path_to_file: str) -> str:
-        with open(path_to_file, "w+") as filecek:
+        with open(path_to_file, "r+") as filecek:
             lines = filecek.read()
         return lines
 

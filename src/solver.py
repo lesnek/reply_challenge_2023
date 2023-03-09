@@ -100,7 +100,7 @@ def get_best_position(state: State) -> Position:
 
 def input_to_state(input: Input) -> State:
     return State(
-        matrix=input.matrix,  # type: ignore
+        matrix=[[i for i in row] for row in input.matrix],  # type: ignore
         available_snakes=input.snakes,
         snakes=[],
     )
