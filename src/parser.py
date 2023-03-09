@@ -23,6 +23,7 @@ class InputParser:
             snakes_cnt=snakes_cnt,
             snakes=snakes,
             matrix=matrix,
+            portal_positions=[],  # TODO
         )
 
     @staticmethod

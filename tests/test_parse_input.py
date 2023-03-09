@@ -27,3 +27,4 @@ def test_input_parser() -> None:
         [3, 6, 7, "*", 3, 0, 6, 4, 5, 7],
         [3, 7, 8, 5, 3, 6, 0, 4, 5, 6],
     ]
+    assert input.portal_positions == [(1, 2), (2, 7), (4, 3)]
