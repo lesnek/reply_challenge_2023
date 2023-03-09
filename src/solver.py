@@ -1,25 +1,4 @@
-from dataclasses import dataclass
-from typing import Literal
-
-from .model import Input
-
-
-@dataclass
-class Output:
-    ...
-
-Direction = Literal["L", "R", "D", "U"]
-Position = tuple[int, int]
-PortDirection = tuple[Direction, Position]
-
-Snake = list[Direction | PortDirection]
-
-
-@dataclass(frozen=True)
-class State:
-    matrix: list[list[int | Literal["*", "x"]]]
-    available_snakes: list[int]
-    snakes: list[Snake]
+from .model import Input, Output, State
 
 
 def solve(input: Input) -> Output:
