@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Sequence
 
 from src.model import Input, Output
 
@@ -40,14 +40,18 @@ class InputParser:
 
 class OutputParser:
     @staticmethod
+    def snake_seg_to_str(snake_segs) -> Sequence[str]:
+        return [str(seg) for seg in snake_segs]
+
+    @staticmethod
     def parse(output: Output) -> str:
         result = []
         for snake_segs in output.snake_segments:
-            result.append(" ".join(snake_segs))
+            result.append(" ".join(OutputParser.snake_seg_to_str(snake_segs)))
         return "\n".join(result)
 
     @staticmethod
     def save_to_file(output: Output) -> None:
         with open("result.txt", "w+") as filecek:
             for snake_segs in output.snake_segments:
-                filecek.write(" ".join(snake_segs))
+                filecek.write(" ".join(OutputParser.snake_seg_to_str(snake_segs)))

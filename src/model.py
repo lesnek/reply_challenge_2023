@@ -21,7 +21,7 @@ SnakeSegments = Sequence[Direction | PortDirection]
 
 @dataclass
 class Output:
-    snake_segments: SnakeSegments
+    snake_segments: Sequence[SnakeSegments]
 
 
 @dataclass(frozen=True)
