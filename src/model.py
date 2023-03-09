@@ -19,11 +19,17 @@ Direction = Literal["L", "R", "D", "U"]
 Position = tuple[int, int]
 PortDirection = tuple[Direction, Position]
 
-Snake = list[Direction | PortDirection]
+SnakeSegments = list[Direction | PortDirection]
 
 
 @dataclass(frozen=True)
 class State:
     matrix: list[list[int | Literal["*", "x"]]]
     available_snakes: list[int]
-    snakes: list[Snake]
+    snakes: SnakeSegments
+
+
+@dataclass
+class CurrentSnake:
+    remaining_segments: int
+    assigned_segments: SnakeSegments
