@@ -30,7 +30,7 @@ class Output:
 
 @dataclass(frozen=True)
 class State:
-    matrix: Sequence[Sequence[int | Literal["*", "x"]]]
+    matrix: list[list[int | Literal["*", "x"]]]
     available_snakes: Sequence[int]
     snakes: list[SnakeSegments]
 

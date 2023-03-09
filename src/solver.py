@@ -1,8 +1,18 @@
 from collections.abc import Sequence
+from typing import cast
 
 from src.parser import OutputParser
 
-from .model import CurrentSnake, Input, Output, Position, SnakeSegments, State
+from .model import (
+    CurrentSnake,
+    Direction,
+    Input,
+    Output,
+    PortDirection,
+    Position,
+    SnakeSegments,
+    State,
+)
 
 
 def solve(input: Input) -> str:
@@ -16,12 +26,52 @@ def solve(input: Input) -> str:
             assigned_segments=(first_position, []),
             last_segment_position=first_position,
         )
-        state.snakes.append(solve_snake(input, state, snake))
+        snake_segments = solve_snake(input, state, snake)
+        state.snakes.append(snake_segments)
 
     return OutputParser.parse(Output(snake_segments=state.snakes))
 
 
 def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegments:
+    if snake.remaining_segments == 0:
+        return snake.assigned_segments
+
+    available_positions = get_available_positions(input, state, snake)
+
+    assert len(available_positions) > 0
+
+    best_position, best_consumption = available_positions[0]
+    best_value = input.matrix[best_position[0]][best_position[1]]
+
+    assert type(best_value) == int
+
+    for new_position, new_consumption in available_positions[1:]:
+        new_value = input.matrix[new_position[0]][best_position[1]]
+
+        assert type(new_value) == int
+
+        if cast(int, new_value) > cast(int, best_value):
+            best_position = new_position
+            best_consumption = new_consumption
+            best_value = new_value
+
+    new_assigned_segments: list[Direction | PortDirection] = [
+        i for i in snake.assigned_segments[1]
+    ]  # copy
+    new_assigned_segments.append(
+        get_direction(snake.last_segment_position, best_position)
+    )
+
+    new_snake = CurrentSnake(
+        remaining_segments=snake.remaining_segments - best_consumption,
+        assigned_segments=(snake.assigned_segments[0], new_assigned_segments),
+        last_segment_position=best_position,
+    )
+    state.matrix[best_position[0]][best_position[1]] = "x"
+    return solve_snake(input, state, new_snake)
+
+
+def get_direction(previous: Position, new: Position) -> Direction | PortDirection:
     raise NotImplemented
 
 
@@ -42,7 +92,7 @@ def get_best_position(state: State) -> Position:
 
 def input_to_state(input: Input) -> State:
     return State(
-        matrix=input.matrix,
+        matrix=input.matrix,  # type: ignore
         available_snakes=input.snakes,
         snakes=[],
     )
