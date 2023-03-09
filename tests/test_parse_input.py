@@ -1,7 +1,6 @@
 from src.parser import InputParser
 
-EXAMPLE_INPUT = """
-10 6 5
+EXAMPLE_INPUT = """10 6 5
 6 7 5 3 3
 1 5 3 6 3 8 5 2 6 8
 6 4 * 0 5 3 7 5 2 8
