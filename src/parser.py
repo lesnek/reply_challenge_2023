@@ -1,0 +1,6 @@
+class InputParser:
+    def __init__(self):
+        ...
+
+    def parse(self, input_path) -> list[list[str], list[str]]:
+        ...
