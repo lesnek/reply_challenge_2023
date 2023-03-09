@@ -18,7 +18,9 @@ class Input:
 Direction = Literal["L", "R", "D", "U"]
 PortDirection = tuple[Direction, Position]
 
-SnakeSegments = Sequence[Direction | PortDirection]
+SnakeSegments = tuple[
+    Position, Sequence[Direction | PortDirection]
+]  # = (starting position, directions)
 
 
 @dataclass
@@ -30,7 +32,7 @@ class Output:
 class State:
     matrix: Sequence[Sequence[int | Literal["*", "x"]]]
     available_snakes: Sequence[int]
-    snakes: Sequence[SnakeSegments]
+    snakes: list[SnakeSegments]
 
 
 @dataclass

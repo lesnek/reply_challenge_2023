@@ -1,9 +1,31 @@
 from collections.abc import Sequence
 
-from .model import CurrentSnake, Input, Output, Position, State
+from src.parser import OutputParser
+
+from .model import CurrentSnake, Input, Output, Position, SnakeSegments, State
 
 
-def solve(input: Input) -> Output:
+def solve(input: Input) -> str:
+    state = input_to_state(input)
+
+    for snake_segments_cnt in input.snakes:
+        first_position = get_best_position(state)
+
+        snake = CurrentSnake(
+            remaining_segments=snake_segments_cnt - 1,
+            assigned_segments=(first_position, []),
+            last_segment_position=first_position,
+        )
+        state.snakes.append(solve_snake(input, state, snake))
+
+    return OutputParser.parse(Output(snake_segments=state.snakes))
+
+
+def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegments:
+    raise NotImplemented
+
+
+def get_best_position(state: State) -> Position:
     raise NotImplemented
 
 
