@@ -20,3 +20,6 @@ build-backend = "pdm.pep517.api"
 dev = [
     "pytest>=7.2.2",
 ]
+
+[tool.pdm.scripts]
+test = "pytest tests"
