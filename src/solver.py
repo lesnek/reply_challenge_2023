@@ -18,21 +18,29 @@ def solve(input: Input) -> tuple[Output, State]:
         key=lambda x: (compare_positions(input.matrix))((x, 0)),
         reverse=True,
     )
+    n = 0
 
     for i, snake_segments_cnt in enumerate(input.snakes):
-        first_position = get_best_position(state)
-        state.matrix[first_position[0]][first_position[1]] = "x"
+        result = None
 
-        print(f"{i / len(input.snakes) * 100}%")
+        while result is None:
+            first_position = get_best_position(state, n, sorted_positions)
+            state.matrix[first_position[0]][first_position[1]] = "x"
 
-        snake = CurrentSnake(
-            remaining_segments=snake_segments_cnt - 1,
-            assigned_segments=(first_position, []),
-            last_segment_position=first_position,
-        )
-        snake_segments = solve_snake(input, state, snake)
-        assert snake_segments is not None
-        state.snakes.append(snake_segments)
+            print(f"{i / len(input.snakes) * 100}%")
+
+            snake = CurrentSnake(
+                remaining_segments=snake_segments_cnt - 1,
+                assigned_segments=(first_position, []),
+                last_segment_position=first_position,
+            )
+            result = solve_snake(input, state, snake)
+            n += 1
+
+            if n >= len(input.snakes):
+                n = 0
+
+        state.snakes.append(result)
 
     return Output(snake_segments=state.snakes), state
 
@@ -95,17 +103,17 @@ def get_direction(
         return direction, new
 
 
-def get_best_position(state: State) -> Position:
-    best_value = 0
-    best_coor = (0, 0)
+def get_best_position(state: State, n: int, positions) -> Position:
+    i = 0
 
-    for row_idx, row in enumerate(state.matrix):
-        for col_idx, value in enumerate(row):
-            if isinstance(value, int) and value > best_value:
-                best_value = value
-                best_coor = (row_idx, col_idx)
+    for row, col in positions:
+        if i == n:
+            return (row, col)
 
-    return best_coor
+        if type(state.matrix[row][col]) == int:
+            i += 1
+
+    raise Exception("V prdeli")
 
 
 def input_to_state(input: Input) -> State:
