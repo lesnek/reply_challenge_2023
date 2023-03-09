@@ -14,14 +14,11 @@ class InputParser:
         snakes = [int(snake) for snake in lines[1].split(" ")]
         matrix = []
         portal_positions = []
-        x, y = 0, 0
+
         for line in lines[2:-1]:
             matrix.append(
                 [self.parse_int_or_asterisk(char) for char in line.split(" ")]
             )
-            if "*" in matrix[y]:
-                portal_positions.extend(self.get_portal_positions(y, matrix[y]))
-            y += 1
 
         return Input(
             width=width,
@@ -29,20 +26,21 @@ class InputParser:
             snakes_cnt=snakes_cnt,
             snakes=snakes,
             matrix=matrix,
-            portal_positions=portal_positions,
+            portal_positions=self.get_portal_positions(matrix),
         )
 
     @staticmethod
     def get_portal_positions(
-        y, row: Sequence[int | Literal["*"]]
+        matrix: list[list[int | Literal["*"]]],
     ) -> Sequence[tuple[int, int]]:
-        result = []
-        x_coor = 0
-        for x in row:
-            if x == "*":
-                result.append((y, x_coor))
-            x_coor += 1
-        return result
+        positions = []
+
+        for row_idx, row in enumerate(matrix):
+            for col_idx, value in enumerate(row):
+                if value == "*":
+                    positions.append((row_idx, col_idx))
+
+        return positions
 
     @staticmethod
     def parse_int_or_asterisk(char: str) -> int | Literal["*"]:

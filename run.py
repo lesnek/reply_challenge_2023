@@ -13,7 +13,6 @@ def main():
 
     input_parser = InputParser()
     input_data = input_parser.open_file(args.filename)
-    print(input_data)
     input = input_parser.parse(input_data)
     output, state = solve(input)
     print(f"{calc_score(input, state)=}")

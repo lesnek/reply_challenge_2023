@@ -1,8 +1,6 @@
 from collections.abc import Sequence
 from typing import cast
 
-from src.parser import OutputParser
-
 from .model import (
     CurrentSnake,
     Direction,
@@ -20,6 +18,8 @@ def solve(input: Input) -> tuple[Output, State]:
 
     for snake_segments_cnt in input.snakes:
         first_position = get_best_position(state)
+        state.matrix[first_position[0]][first_position[1]] = "x"
+        print(first_position, state.matrix[first_position[0]][first_position[1]])
 
         snake = CurrentSnake(
             remaining_segments=snake_segments_cnt - 1,
@@ -46,9 +46,12 @@ def solve_snake(input: Input, state: State, snake: CurrentSnake) -> SnakeSegment
     assert type(best_value) == int
 
     for new_position, new_consumption, new_direction in available_positions[1:]:
-        new_value = input.matrix[new_position[0]][best_position[1]]
+        new_value = input.matrix[new_position[0]][new_position[1]]
 
-        assert type(new_value) == int
+        try:
+            assert type(new_value) == int
+        except Exception:
+            breakpoint()
 
         if cast(int, new_value) > cast(int, best_value):
             best_position = new_position
@@ -86,14 +89,12 @@ def get_direction(
 def get_best_position(state: State) -> Position:
     best_value = 0
     best_coor = (0, 0)
-    x, y = 0, 0
-    for row in state.matrix:
-        for value in row:
+
+    for row_idx, row in enumerate(state.matrix):
+        for col_idx, value in enumerate(row):
             if isinstance(value, int) and value > best_value:
                 best_value = value
-                best_coor = (y, x)
-            x += 1
-        y += 1
+                best_coor = (row_idx, col_idx)
 
     return best_coor
 
@@ -111,7 +112,7 @@ def get_near_positions(
 ) -> Sequence[tuple[Position, Direction]]:
     cur_row, cur_col = position
 
-    positions = [
+    positions: list[tuple[Position, Direction]] = [
         ((cur_row, (cur_col - 1) % input.width), "L"),
         ((cur_row, (cur_col + 1) % input.width), "R"),
         (((cur_row - 1) % input.heigth, cur_col), "U"),
@@ -149,7 +150,11 @@ def get_available_positions(
                 if portal_position == position:
                     continue
 
-                portal_positions = get_near_positions(input, state, portal_position)
+                portal_positions = [
+                    p
+                    for p in get_near_positions(input, state, portal_position)
+                    if p != "*"
+                ]
                 final_positions.extend(
                     [(position[0], 2, direction) for position in portal_positions]
                 )
